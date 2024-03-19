@@ -3,6 +3,10 @@
     <div class="sidebar"></div>
     <div class="content">
       <div class="search-card">
+        <div class="serch-card-text">
+          <i class="bi bi-cash-coin"></i>
+          <p>Calcule o valor da viagem</p>
+        </div>
         <form @submit.prevent="onSubmit">
           <div class="form-group">
             <label for="destination">Destino:</label>
@@ -19,7 +23,7 @@
         </form>
       </div>
       <div class="results">
-        <!-- Os resultados da busca serão listados aqui -->
+        <p>Nenhum dado selecionado</p>
       </div>
     </div>
   </div>
@@ -57,10 +61,10 @@ body {
   padding: 0;
   padding-top: 0;
   position: absolute;
-  top: 120px; /* Considerando a barra superior e a margem */
-  left: 340px; /* Considerando a barra lateral e a margem */
-  width: calc(100% - 360px); /* Subtraindo a barra lateral e as margens */
-  height: calc(100% - 260px); /* Subtraindo a barra superior e as margens */
+  top: 120px;
+  left: 340px;
+  width: calc(100% - 360px);
+  height: calc(100% - 260px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -89,24 +93,48 @@ body {
   flex-direction: column;
   justify-content: center;
 }
+.serch-card-text {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 40px;
+  font-size: 24px;
+}
 
 .results {
   background-color: #f5f5f5;
   flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.results p {
+  font-size: 24px;
 }
 
 .form-group {
   margin-bottom: 10px;
+  width: 100%;
+  text-align: left;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+}
+
+button {
+  margin-top: 10px; /* Adicionado para dar um pouco de espaço acima do botão */
+  align-self: center; /* Adicionado para centralizar o botão */
+  color: black;
+  width: 200px;
+  background-color: rgb(49, 169, 129);
 }
 
 select,
-input,
-button {
-  width: 100%;
+input {
+  height: 40px;
+  border-radius: 10px;
+  padding: 0 10px;
 }
 </style>

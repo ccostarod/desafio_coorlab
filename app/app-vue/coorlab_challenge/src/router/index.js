@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import GenericView from "../components/GenericView.vue";
 import LoginCard from "@/components/LoginView.vue";
 import MenuView from "@/components/MenuView.vue";
+import store from "@/store";
 
 const routes = [
   {
@@ -30,6 +31,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.path === "/login" && store.state.isLoggedIn) {
+    next("/");
+  } else {
+    next();
+  }
 });
 
 export default router;
