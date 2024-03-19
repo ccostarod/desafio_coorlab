@@ -9,6 +9,22 @@ const routes = [
     name: "home",
     component: GenericView,
   },
+  {
+    path: "/menu",
+    name: "menu",
+    components: {
+      default: GenericView,
+      anotherComponent: MenuView,
+    },
+  },
+  {
+    path: "/login",
+    name: "login",
+    components: {
+      default: GenericView,
+      anotherComponent: LoginCard,
+    },
+  },
 ];
 
 const router = createRouter({
