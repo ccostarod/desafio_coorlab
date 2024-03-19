@@ -1,6 +1,6 @@
 <template>
   <router-view />
-  <router-view name="anotherComponent"></router-view>
+  <router-view name="anotherComponent" v-if="$route.path !== '/'"></router-view>
 </template>
 
 <style>

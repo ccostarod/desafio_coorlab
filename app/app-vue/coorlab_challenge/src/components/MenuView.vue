@@ -124,8 +124,8 @@ label {
 }
 
 button {
-  margin-top: 10px; /* Adicionado para dar um pouco de espaço acima do botão */
-  align-self: center; /* Adicionado para centralizar o botão */
+  margin-top: 10px;
+  align-self: center;
   color: black;
   width: 200px;
   background-color: rgb(49, 169, 129);
