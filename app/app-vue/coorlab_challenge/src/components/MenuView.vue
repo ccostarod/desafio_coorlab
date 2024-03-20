@@ -12,7 +12,9 @@
             <label for="destination">Destino:</label>
             <select id="destination" v-model="destination">
               <option value="">Selecione...</option>
-              <!-- Adicione suas opções de destino aqui -->
+              <option v-for="city in cities" :value="city" :key="city">
+                {{ city }}
+              </option>
             </select>
           </div>
           <div class="form-group">
@@ -23,25 +25,75 @@
         </form>
       </div>
       <div class="results">
-        <p>Nenhum dado selecionado</p>
+        <div v-if="!fastestOption && !cheapestOption">
+          <p>Nenhum dado selecionado</p>
+        </div>
+        <div v-else class="cards">
+          <div v-if="fastestOption" class="card">
+            <h2>Opção mais rápida</h2>
+            <p>Preço: {{ fastestOption.price_econ }}</p>
+            <p>Empresa: {{ fastestOption.name }}</p>
+            <p>Duração: {{ fastestOption.duration }}</p>
+          </div>
+          <div v-if="cheapestOption" class="card">
+            <h2>Opção mais barata</h2>
+            <p>Preço: {{ cheapestOption.price_econ }}</p>
+            <p>Empresa: {{ cheapestOption.name }}</p>
+            <p>Duração: {{ cheapestOption.duration }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "MenuView",
   data() {
     return {
       destination: "",
       date: "",
+      cities: [],
+      fastestOption: null,
+      cheapestOption: null,
     };
   },
   methods: {
-    onSubmit() {
-      // Implemente a lógica de busca aqui
+    async onSubmit() {
+      if (!this.destination || !this.date) {
+        alert("Por favor, preencha todos os campos");
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:3000/data?city=${this.destination}&date=${this.date}`
+      );
+      const transportOptions = response.data.transport;
+
+      const sortedByTime = [...transportOptions].sort(
+        (a, b) =>
+          this.parseDuration(a.duration) - this.parseDuration(b.duration)
+      );
+      const sortedByPrice = [...transportOptions].sort(
+        (a, b) => this.parsePrice(a.price_econ) - this.parsePrice(b.price_econ)
+      );
+
+      this.fastestOption = sortedByTime[0];
+      this.cheapestOption = sortedByPrice[0];
     },
+    parseDuration(duration) {
+      return parseInt(duration.replace("h", ""));
+    },
+    parsePrice(price) {
+      return parseFloat(price.replace("R$ ", "").replace(",", "."));
+    },
+  },
+  async created() {
+    const response = await axios.get("http://localhost:3000/data");
+    const cities = response.data.transport.map((item) => item.city);
+    this.cities = [...new Set(cities)]; // Remove duplicates
   },
 };
 </script>
@@ -136,5 +188,19 @@ input {
   height: 40px;
   border-radius: 10px;
   padding: 0 10px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background-color: #ddd;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
