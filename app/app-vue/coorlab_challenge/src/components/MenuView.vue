@@ -29,18 +29,46 @@
           <p>Nenhum dado selecionado</p>
         </div>
         <div v-else class="cards">
+          <p class="result-text">
+            Essas são as melhores alternativas de viagem para a data selecionada
+          </p>
           <div v-if="fastestOption" class="card">
-            <h2>Opção mais rápida</h2>
-            <p>Preço: {{ fastestOption.price_econ }}</p>
-            <p>Empresa: {{ fastestOption.name }}</p>
-            <p>Duração: {{ fastestOption.duration }}</p>
+            <div class="left-card">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="card-content">
+              <h3>
+                <strong> {{ fastestOption.name }} </strong>
+              </h3>
+              <p>
+                {{ fastestOption.seatOrBed }}
+              </p>
+              <p>Tempo estimado: {{ fastestOption.duration }}</p>
+            </div>
+            <div class="price-card">
+              <h4>Preço</h4>
+              <p>{{ fastestOption.price_econ }}</p>
+            </div>
           </div>
           <div v-if="cheapestOption" class="card">
-            <h2>Opção mais barata</h2>
-            <p>Preço: {{ cheapestOption.price_econ }}</p>
-            <p>Empresa: {{ cheapestOption.name }}</p>
-            <p>Duração: {{ cheapestOption.duration }}</p>
+            <div class="left-card">
+              <i class="bi bi-coin"></i>
+            </div>
+            <div class="card-content">
+              <h3>
+                <strong> {{ cheapestOption.name }} </strong>
+              </h3>
+              <p>
+                {{ cheapestOption.seatOrBed }}
+              </p>
+              <p>Tempo estimado: {{ cheapestOption.duration }}</p>
+            </div>
+            <div class="price-card">
+              <h4>Preço</h4>
+              <p>{{ cheapestOption.price_econ }}</p>
+            </div>
           </div>
+          <button @click="resetForm" class="reset-button">Limpar</button>
         </div>
       </div>
     </div>
@@ -49,6 +77,7 @@
 
 <script>
 import axios from "axios";
+import Swal from "sweetalert2";
 export default {
   name: "MenuView",
   data() {
@@ -63,7 +92,13 @@ export default {
   methods: {
     async onSubmit() {
       if (!this.destination || !this.date) {
-        alert("Por favor, preencha todos os campos");
+        Swal.fire({
+          title: "Erro!",
+          text: "Por favor, preencha todos os campos",
+          icon: "error",
+          confirmButtonText: "OK",
+          position: "center",
+        });
         return;
       }
 
@@ -72,22 +107,42 @@ export default {
       );
       const transportOptions = response.data.transport;
 
-      const sortedByTime = [...transportOptions].sort(
+      // Filtrar opções com base na cidade escolhida
+      const filteredOptions = transportOptions.filter(
+        (option) => option.city === this.destination
+      );
+
+      const sortedByTime = [...filteredOptions].sort(
         (a, b) =>
           this.parseDuration(a.duration) - this.parseDuration(b.duration)
       );
-      const sortedByPrice = [...transportOptions].sort(
+      const sortedByPrice = [...filteredOptions].sort(
         (a, b) => this.parsePrice(a.price_econ) - this.parsePrice(b.price_econ)
       );
 
       this.fastestOption = sortedByTime[0];
       this.cheapestOption = sortedByPrice[0];
+
+      this.fastestOption.seatOrBed =
+        this.fastestOption.type === "complete"
+          ? `Leito: ${this.fastestOption.bed}`
+          : `Poltrona: ${this.fastestOption.seat}`;
+      this.cheapestOption.seatOrBed =
+        this.cheapestOption.type === "complete"
+          ? `Leito: ${this.cheapestOption.bed}`
+          : `Poltrona: ${this.cheapestOption.seat}`;
     },
     parseDuration(duration) {
       return parseInt(duration.replace("h", ""));
     },
     parsePrice(price) {
       return parseFloat(price.replace("R$ ", "").replace(",", "."));
+    },
+    resetForm() {
+      this.destination = "";
+      this.date = "";
+      this.fastestOption = null;
+      this.cheapestOption = null;
     },
   },
   async created() {
@@ -139,7 +194,7 @@ body {
 .search-card {
   background-color: #ddd;
   padding: 20px;
-  width: 400px;
+  width: 600px;
   margin: 0 20px;
   display: flex;
   flex-direction: column;
@@ -159,6 +214,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 }
 
 .results p {
@@ -193,14 +249,98 @@ input {
 .cards {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  margin: 20px;
+  position: relative;
+  flex-grow: 1;
+  justify-content: center;
 }
 
 .card {
   background-color: #ddd;
   padding: 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  position: relative;
+  border-radius: 5px;
+  width: 600px;
+  height: 150px;
+}
+
+.small-text p {
+  font-size: 9px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  margin: 0;
+}
+
+.card-content p {
+  font-size: 16px;
+}
+
+.card-content p,
+h3 {
+  text-align: left;
+}
+
+.price-card {
+  background-color: #ddd;
+  padding: 10px;
+  width: 170px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  position: absolute;
+  right: -180px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.result-text {
+  margin-bottom: 20px;
+}
+
+.left-card {
+  background-color: rgb(49, 169, 129);
+  width: 100px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.left-card i {
+  font-size: 32px;
+}
+
+.reset-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 10px 20px;
+  background-color: rgb(251, 210, 61);
+  color: #000000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
