@@ -34,6 +34,7 @@ Para executar esta aplicação web, siga os passos abaixo:
     ```bash
     npm run serve
     ```
+    
     Isso iniciará o servidor de desenvolvimento Vue.js, na porta 8080.
 
 3. **Acesse a aplicação**:
@@ -41,8 +42,7 @@ Para executar esta aplicação web, siga os passos abaixo:
     Abra um navegador web e acesse `http://localhost:8080`. Você deverá ver a interface do usuário da aplicação e poderá interagir com ela.
 
 # Interface
-
-    A interface conta com um sistema de login (Sem nenhuma autenticação) e caso o login seja bem sucedido, direciona para uma tela onde é possível acessar a calculadora de viagem. Na calculadora de viagem, é possível enviar o destino e a data, e receber logo em seguida, os dados das viagens que melhores atendem o público alvo dessa aplicação.
+A interface conta com um sistema de login (Sem nenhuma autenticação, pois não foi pedido) e caso o login seja bem sucedido, direciona para uma tela onde é possível acessar a calculadora de viagem. Na calculadora de viagem, é possível enviar o destino e a data, e receber logo em seguida, os dados das viagens que melhores atendem o público alvo dessa aplicação.
 
 # Conclusão
 
